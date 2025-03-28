@@ -6,8 +6,10 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'LaSalle2025'
 
 users = {
-    "usuario1": "password1",
-    "usuario2": "password2"
+    "jerson": "enyel123",
+    "daniel": "gatitaNox",
+    "juan": "LaSalle2025",
+    "fernando": "LaSalle2025",
 }
 
 @app.route('/')

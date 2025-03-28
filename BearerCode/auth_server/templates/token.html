@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Token Generado</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .token {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            word-break: break-all;
+            margin: 20px 0;
+        }
+        .instructions {
+            margin-top: 30px;
+            font-size: 0.9em;
+            color: #555;
+        }
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Token Generado con Éxito</h1>
+    
+    <p>Tu token de acceso es:</p>
+    <div class="token">{{ token }}</div>
+    
+    <p>Usa este token en el encabezado de tus solicitudes:</p>
+    <pre>Authorization: Bearer {{ token }}</pre>
+    
+    <div class="instructions">
+        <p>Este token expirará en 30 minutos. Vuelve a generar uno nuevo cuando sea necesario.</p>
+    </div>
+    
+    <a href="/" class="btn">Volver al inicio</a>
+</body>
+</html>

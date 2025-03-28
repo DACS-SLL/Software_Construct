@@ -1,19 +1,39 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template, redirect, url_for
 import jwt
 import datetime
-from functools import wraps
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'LaSalle2025'
 
-# Base de datos de usuarios simulada
 users = {
     "usuario1": "password1",
     "usuario2": "password2"
 }
 
+@app.route('/')
+def home():
+    return render_template('login.html')
+
+@app.route('/login', methods=['POST'])
+def login_form():
+    username = request.form.get('username')
+    password = request.form.get('password')
+    
+    if not username or not password:
+        return render_template('login.html', error="Usuario y contraseña requeridos")
+    
+    if username not in users or users[username] != password:
+        return render_template('login.html', error="Credenciales inválidas")
+    
+    token = jwt.encode({
+        'user': username,
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
+    }, app.config['SECRET_KEY'], algorithm="HS256")
+    
+    return render_template('token.html', token=token.decode('utf-8') if isinstance(token, bytes) else token)
+
 @app.route('/oauth/token', methods=['POST'])
-def login():
+def login_api():
     auth = request.authorization
     
     if not auth or not auth.username or not auth.password:
@@ -27,7 +47,7 @@ def login():
         'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
     }, app.config['SECRET_KEY'], algorithm="HS256")
     
-    return jsonify({"token": token})
+    return jsonify({"token": token.decode('utf-8') if isinstance(token, bytes) else token})
 
 if __name__ == '__main__':
     app.run(port=5001)

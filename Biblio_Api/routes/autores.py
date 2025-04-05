@@ -4,10 +4,10 @@ from marshmallow import Schema, fields, validate, ValidationError
 from models import db
 from models.autor import Autor
 
-# Creación del Blueprint para autores
+# Blueprint para autores
 autores_bp = Blueprint('autores', __name__, url_prefix='/api/autores')
 
-# Schema para validación con marshmallow
+# Marshmallow
 class AutorSchema(Schema):
     nombre = fields.String(required=True, validate=validate.Length(min=1, max=50))
     apellido = fields.String(required=True, validate=validate.Length(min=1, max=50))
@@ -47,10 +47,8 @@ def create_autor():
         }), 415
     
     try:
-        # Validar datos de entrada
         datos = autor_schema.load(request.json)
         
-        # Crear nuevo autor
         nuevo_autor = Autor(
             nombre=datos['nombre'],
             apellido=datos['apellido'],
@@ -119,14 +117,14 @@ def delete_autor(autor_id):
     """Eliminar un autor"""
     autor = Autor.query.get_or_404(autor_id, description='Autor no encontrado')
     
-    # Verificar si el autor tiene libros asociados
+    # Libros asociados
     if autor.libros.count() > 0:
         return jsonify({
             'status': 'error',
             'message': 'No se puede eliminar el autor porque tiene libros asociados'
         }), 400
     
-    # Eliminar autor
+    # Eliminar
     db.session.delete(autor)
     db.session.commit()
     

@@ -4,10 +4,10 @@ from models import db
 from models.libro import Libro
 from models.autor import Autor
 
-# Creación del Blueprint para libros
+#Blueprint para libros
 libros_bp = Blueprint('libros', __name__, url_prefix='/api/libros')
 
-# Schema para validación con marshmallow
+# Schema para validación
 class LibroSchema(Schema):
     titulo = fields.String(required=True, validate=validate.Length(min=1, max=100))
     isbn = fields.String(required=False, allow_none=True, validate=validate.Length(max=20))
@@ -19,7 +19,7 @@ class LibroSchema(Schema):
 
 libro_schema = LibroSchema()
 
-# Rutas para operaciones CRUD de libros
+# CRUD de libros
 
 @libros_bp.route('/', methods=['GET'])
 def get_libros():
@@ -49,7 +49,7 @@ def create_libro():
         }), 415
     
     try:
-        # Validar datos de entrada
+        # Validar
         datos = libro_schema.load(request.json)
         
         # Verificar que el autor existe
@@ -59,8 +59,7 @@ def create_libro():
                 'status': 'error',
                 'message': f'El autor con ID {datos["autor_id"]} no existe'
             }), 400
-        
-        # Verificar si el ISBN ya existe (si se proporciona)
+
         if datos.get('isbn'):
             existing_libro = Libro.query.filter_by(isbn=datos['isbn']).first()
             if existing_libro:
@@ -109,10 +108,8 @@ def update_libro(libro_id):
     libro = Libro.query.get_or_404(libro_id, description='Libro no encontrado')
     
     try:
-        # Validar datos de entrada
         datos = libro_schema.load(request.json)
         
-        # Verificar que el autor existe
         autor = Autor.query.get(datos['autor_id'])
         if not autor:
             return jsonify({
@@ -129,7 +126,6 @@ def update_libro(libro_id):
                     'message': f'Ya existe un libro con el ISBN {datos["isbn"]}'
                 }), 400
         
-        # Actualizar libro
         libro.titulo = datos['titulo']
         libro.isbn = datos.get('isbn')
         libro.anio_publicacion = datos.get('anio_publicacion')

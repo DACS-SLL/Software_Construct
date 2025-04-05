@@ -8,20 +8,19 @@ from routes.libros import libros_bp
 
 def create_app(config_name='default'):
     app = Flask(__name__)
-    
-    # Configurar la aplicación
+
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
     
-    # Inicializar extensiones
+    # Extensiones
     db.init_app(app)
     migrate = Migrate(app, db)
     
-    # Registrar blueprints
+    # Blueprints
     app.register_blueprint(autores_bp)
     app.register_blueprint(libros_bp)
     
-    # Ruta raíz
+    # Raíz
     @app.route('/')
     def index():
         return jsonify({
@@ -33,7 +32,7 @@ def create_app(config_name='default'):
             }
         })
     
-    # Manejador de errores 404
+    # Errores 404
     @app.errorhandler(404)
     def not_found(error):
         return jsonify({
@@ -41,7 +40,7 @@ def create_app(config_name='default'):
             'message': 'Recurso no encontrado'
         }), 404
     
-    # Manejador de errores 500
+    # Errores 500
     @app.errorhandler(500)
     def internal_error(error):
         return jsonify({

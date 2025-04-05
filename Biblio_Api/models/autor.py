@@ -12,7 +12,7 @@ class Autor(db.Model):
     biografia = db.Column(db.Text, nullable=True)
     fecha_creacion = db.Column(db.DateTime, default=datetime.utcnow)
     
-    # Relación con libros (un autor puede tener muchos libros)
+    # Un autor puede tener muchos libros
     libros = db.relationship('Libro', back_populates='autor', lazy='dynamic')
     
     def __repr__(self):

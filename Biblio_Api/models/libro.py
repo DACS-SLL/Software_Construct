@@ -14,7 +14,7 @@ class Libro(db.Model):
     paginas = db.Column(db.Integer, nullable=True)
     fecha_creacion = db.Column(db.DateTime, default=datetime.utcnow)
     
-    # Relación con el autor (un libro pertenece a un autor)
+    # Un libro pertenece a un autor
     autor_id = db.Column(db.Integer, db.ForeignKey('autores.id'), nullable=False)
     autor = db.relationship('Autor', back_populates='libros')
     

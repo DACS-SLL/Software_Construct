@@ -4,6 +4,7 @@ from flask_cors import CORS
 from config import config
 from models import db, jwt
 from models.usuario import Usuario
+from flask_migrate import Migrate
 
 # Importar blueprints
 from routes.auth import auth_bp
@@ -27,6 +28,7 @@ def create_app(config_name='default'):
     
     # Inicializar extensiones
     db.init_app(app)
+    migrate = Migrate(app, db)
     jwt.init_app(app)
     
     # Registrar blueprints

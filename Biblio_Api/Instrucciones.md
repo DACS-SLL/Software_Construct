@@ -74,7 +74,7 @@ La API estará disponible en `http://localhost:5000`.
 1. **Importar la colección de Postman**
    - Abrir Postman
    - Hacer clic en "Importar"
-   - Cargar el archivo `biblioteca_api_mejorada_collection.json` proporcionado en este repositorio
+   - Cargar el archivo `api_biblio.json` proporcionado en este repositorio
 
 2. **Verificar que la variable de entorno esté configurada**
    - La colección utiliza una variable `{{base_url}}` que debe estar configurada a `http://localhost:5000`

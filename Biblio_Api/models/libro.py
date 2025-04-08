@@ -1,4 +1,3 @@
-
 from datetime import datetime
 from . import db
 
@@ -9,28 +8,52 @@ class Libro(db.Model):
     titulo = db.Column(db.String(100), nullable=False)
     isbn = db.Column(db.String(20), unique=True, nullable=True)
     anio_publicacion = db.Column(db.Integer, nullable=True)
-    genero = db.Column(db.String(50), nullable=True)
     sinopsis = db.Column(db.Text, nullable=True)
     paginas = db.Column(db.Integer, nullable=True)
+    activo = db.Column(db.Boolean, default=True)  # Para borrado lógico
     fecha_creacion = db.Column(db.DateTime, default=datetime.utcnow)
+    fecha_actualizacion = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
-    # Un libro pertenece a un autor
-    autor_id = db.Column(db.Integer, db.ForeignKey('autores.id'), nullable=False)
-    autor = db.relationship('Autor', back_populates='libros')
+    # Relación muchos a muchos con Autor a través de LibroAutor
+    autores = db.relationship('LibroAutor', back_populates='libro', cascade="all, delete-orphan")
+    
+    # Relación muchos a muchos con Género a través de LibroGenero
+    generos = db.relationship('LibroGenero', back_populates='libro', cascade="all, delete-orphan")
     
     def __repr__(self):
         return f'<Libro {self.titulo}>'
     
-    def to_dict(self):
-        return {
+    def to_dict(self, include_autores=False, include_generos=False):
+        result = {
             'id': self.id,
             'titulo': self.titulo,
             'isbn': self.isbn,
             'anio_publicacion': self.anio_publicacion,
-            'genero': self.genero,
             'sinopsis': self.sinopsis,
             'paginas': self.paginas,
-            'autor_id': self.autor_id,
-            'autor_nombre': f"{self.autor.nombre} {self.autor.apellido}" if self.autor else None,
-            'fecha_creacion': self.fecha_creacion.isoformat()
+            'activo': self.activo,
+            'fecha_creacion': self.fecha_creacion.isoformat(),
+            'fecha_actualizacion': self.fecha_actualizacion.isoformat()
         }
+        
+        if include_autores:
+            result['autores'] = [
+                {
+                    'id': la.autor.id,
+                    'nombre': la.autor.nombre,
+                    'apellido': la.autor.apellido,
+                    'rol': la.rol
+                }
+                for la in self.autores if la.autor.activo
+            ]
+            
+        if include_generos:
+            result['generos'] = [
+                {
+                    'id': lg.genero.id,
+                    'nombre': lg.genero.nombre
+                }
+                for lg in self.generos if lg.genero.activo
+            ]
+            
+        return result

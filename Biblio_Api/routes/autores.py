@@ -1,13 +1,17 @@
 from flask import Blueprint, jsonify, request
 from datetime import datetime
 from marshmallow import Schema, fields, validate, ValidationError
+from flask_jwt_extended import jwt_required
 from models import db
 from models.autor import Autor
+from models.libro import Libro
+from models.libro_autor import LibroAutor
+from routes.auth import admin_required
 
-# Blueprint para autores
+# Creación del Blueprint para autores
 autores_bp = Blueprint('autores', __name__, url_prefix='/api/autores')
 
-# Marshmallow
+# Schema para validación con marshmallow
 class AutorSchema(Schema):
     nombre = fields.String(required=True, validate=validate.Length(min=1, max=50))
     apellido = fields.String(required=True, validate=validate.Length(min=1, max=50))
@@ -21,8 +25,8 @@ autor_schema = AutorSchema()
 
 @autores_bp.route('/', methods=['GET'])
 def get_autores():
-    """Obtener todos los autores"""
-    autores = Autor.query.all()
+    """Obtener todos los autores activos"""
+    autores = Autor.query.filter_by(activo=True).all()
     return jsonify({
         'status': 'success',
         'data': [autor.to_dict() for autor in autores]
@@ -32,12 +36,20 @@ def get_autores():
 def get_autor(autor_id):
     """Obtener un autor por su ID"""
     autor = Autor.query.get_or_404(autor_id, description='Autor no encontrado')
+    
+    if not autor.activo:
+        return jsonify({
+            'status': 'error',
+            'message': 'Autor no encontrado'
+        }), 404
+    
     return jsonify({
         'status': 'success',
-        'data': autor.to_dict()
+        'data': autor.to_dict(include_libros=True)
     }), 200
 
 @autores_bp.route('/', methods=['POST'])
+@jwt_required()
 def create_autor():
     """Crear un nuevo autor"""
     if not request.is_json:
@@ -47,8 +59,10 @@ def create_autor():
         }), 415
     
     try:
+        # Validar datos de entrada
         datos = autor_schema.load(request.json)
         
+        # Crear nuevo autor
         nuevo_autor = Autor(
             nombre=datos['nombre'],
             apellido=datos['apellido'],
@@ -75,6 +89,7 @@ def create_autor():
         }), 400
 
 @autores_bp.route('/<int:autor_id>', methods=['PUT'])
+@jwt_required()
 def update_autor(autor_id):
     """Actualizar un autor existente"""
     if not request.is_json:
@@ -84,6 +99,12 @@ def update_autor(autor_id):
         }), 415
     
     autor = Autor.query.get_or_404(autor_id, description='Autor no encontrado')
+    
+    if not autor.activo:
+        return jsonify({
+            'status': 'error',
+            'message': 'Autor no encontrado'
+        }), 404
     
     try:
         # Validar datos de entrada
@@ -113,19 +134,19 @@ def update_autor(autor_id):
         }), 400
 
 @autores_bp.route('/<int:autor_id>', methods=['DELETE'])
+@jwt_required()
 def delete_autor(autor_id):
-    """Eliminar un autor"""
+    """Eliminar un autor (borrado lógico)"""
     autor = Autor.query.get_or_404(autor_id, description='Autor no encontrado')
     
-    # Libros asociados
-    if autor.libros.count() > 0:
+    if not autor.activo:
         return jsonify({
             'status': 'error',
-            'message': 'No se puede eliminar el autor porque tiene libros asociados'
-        }), 400
+            'message': 'Autor no encontrado'
+        }), 404
     
-    # Eliminar
-    db.session.delete(autor)
+    # Borrado lógico
+    autor.activo = False
     db.session.commit()
     
     return jsonify({
@@ -138,8 +159,71 @@ def get_autor_libros(autor_id):
     """Obtener todos los libros de un autor"""
     autor = Autor.query.get_or_404(autor_id, description='Autor no encontrado')
     
-    libros = autor.libros.all()
+    if not autor.activo:
+        return jsonify({
+            'status': 'error',
+            'message': 'Autor no encontrado'
+        }), 404
+    
+    # Obtener los libros activos de este autor
+    libros = [la.libro for la in autor.libros if la.libro.activo]
+    
     return jsonify({
         'status': 'success',
         'data': [libro.to_dict() for libro in libros]
+    }), 200
+
+@autores_bp.route('/<int:autor_id>/libros/<int:libro_id>', methods=['POST'])
+@jwt_required()
+def add_libro_to_autor(autor_id, libro_id):
+    """Asociar un libro existente a un autor"""
+    autor = Autor.query.get_or_404(autor_id, description='Autor no encontrado')
+    libro = Libro.query.get_or_404(libro_id, description='Libro no encontrado')
+    
+    if not autor.activo or not libro.activo:
+        return jsonify({
+            'status': 'error',
+            'message': 'Autor o libro no encontrado'
+        }), 404
+    
+    # Verificar si ya existe la relación
+    rel = LibroAutor.query.filter_by(autor_id=autor_id, libro_id=libro_id).first()
+    if rel:
+        return jsonify({
+            'status': 'error',
+            'message': 'El libro ya está asociado a este autor'
+        }), 400
+    
+    # Obtener el rol (si se proporciona)
+    rol = request.json.get('rol') if request.is_json else None
+    
+    # Crear la relación
+    nueva_rel = LibroAutor(
+        autor_id=autor_id,
+        libro_id=libro_id,
+        rol=rol
+    )
+    
+    db.session.add(nueva_rel)
+    db.session.commit()
+    
+    return jsonify({
+        'status': 'success',
+        'message': 'Libro asociado al autor exitosamente'
+    }), 201
+
+@autores_bp.route('/<int:autor_id>/libros/<int:libro_id>', methods=['DELETE'])
+@jwt_required()
+def remove_libro_from_autor(autor_id, libro_id):
+    """Eliminar la asociación entre un libro y un autor"""
+    rel = LibroAutor.query.filter_by(autor_id=autor_id, libro_id=libro_id).first_or_404(
+        description='Relación no encontrada'
+    )
+    
+    db.session.delete(rel)
+    db.session.commit()
+    
+    return jsonify({
+        'status': 'success',
+        'message': 'Asociación eliminada exitosamente'
     }), 200

@@ -1,0 +1,788 @@
+{
+	"info": {
+		"_postman_id": "fd5c10e0-72e3-4dc0-90f4-bf07c16a3a5d",
+		"name": "API Biblioteca Mejorada",
+		"description": "Colección para probar la API mejorada de gestión de Autores, Libros y Géneros con autenticación",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Autenticación",
+			"item": [
+				{
+					"name": "Registro de Usuario",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"usuario1\",\n    \"email\": \"usuario1@ejemplo.com\",\n    \"password\": \"contraseña123\",\n    \"nombre\": \"Usuario\",\n    \"apellido\": \"Demo\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						}
+					}
+				},
+				{
+					"name": "Inicio de Sesión",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.status === 'success') {",
+									"    pm.environment.set(\"auth_token\", jsonData.data.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"admin\",\n    \"password\": \"admin123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					}
+				},
+				{
+					"name": "Ver Perfil",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/auth/profile",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"profile"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Géneros",
+			"item": [
+				{
+					"name": "Obtener todos los géneros",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/api/generos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"generos"
+							]
+						}
+					}
+				},
+				{
+					"name": "Obtener género por ID",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/api/generos/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"generos",
+								"1"
+							]
+						}
+					}
+				},
+				{
+					"name": "Crear género",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombre\": \"Misterio\",\n    \"descripcion\": \"Libros que involucran elementos de misterio y suspenso\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/generos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"generos"
+							]
+						}
+					}
+				},
+				{
+					"name": "Actualizar género",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombre\": \"Misterio y Suspense\",\n    \"descripcion\": \"Libros que involucran elementos de misterio, intriga y suspenso\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/generos/7",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"generos",
+								"7"
+							]
+						}
+					}
+				},
+				{
+					"name": "Eliminar género",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/generos/7",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"generos",
+								"7"
+							]
+						}
+					}
+				},
+				{
+					"name": "Obtener libros de un género",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/api/generos/1/libros",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"generos",
+								"1",
+								"libros"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Autores",
+			"item": [
+				{
+					"name": "Obtener todos los autores",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/api/autores",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"autores"
+							]
+						}
+					}
+				},
+				{
+					"name": "Obtener autor por ID",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/api/autores/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"autores",
+								"1"
+							]
+						}
+					}
+				},
+				{
+					"name": "Crear autor",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombre\": \"Gabriel\",\n    \"apellido\": \"García Márquez\",\n    \"fecha_nacimiento\": \"1927-03-06\",\n    \"nacionalidad\": \"Colombiana\",\n    \"biografia\": \"Conocido como Gabo, fue un escritor, cuentista, guionista y periodista colombiano, premio Nobel de Literatura en 1982.\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/autores",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"autores"
+							]
+						}
+					}
+				},
+				{
+					"name": "Actualizar autor",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombre\": \"Gabriel\",\n    \"apellido\": \"García Márquez\",\n    \"fecha_nacimiento\": \"1927-03-06\",\n    \"nacionalidad\": \"Colombiana\",\n    \"biografia\": \"Biografía actualizada del autor. Ganador del Premio Nobel de Literatura.\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/autores/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"autores",
+								"1"
+							]
+						}
+					}
+				},
+				{
+					"name": "Eliminar autor",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/autores/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"autores",
+								"1"
+							]
+						}
+					}
+				},
+				{
+					"name": "Obtener libros de un autor",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/api/autores/1/libros",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"autores",
+								"1",
+								"libros"
+							]
+						}
+					}
+				},
+				{
+					"name": "Asociar libro a autor",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rol\": \"autor principal\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/autores/1/libros/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"autores",
+								"1",
+								"libros",
+								"1"
+							]
+						}
+					}
+				},
+				{
+					"name": "Eliminar asociación libro-autor",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/autores/1/libros/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"autores",
+								"1",
+								"libros",
+								"1"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Libros",
+			"item": [
+				{
+					"name": "Obtener todos los libros",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/api/libros",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"libros"
+							]
+						}
+					}
+				},
+				{
+					"name": "Obtener libro por ID",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/api/libros/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"libros",
+								"1"
+							]
+						}
+					}
+				},
+				{
+					"name": "Crear libro",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"titulo\": \"Cien años de soledad\",\n    \"isbn\": \"978-0307474728\",\n    \"anio_publicacion\": 1967,\n    \"sinopsis\": \"La historia de la familia Buendía a lo largo de siete generaciones en el pueblo ficticio de Macondo.\",\n    \"paginas\": 417,\n    \"autores\": [\n        {\n            \"id\": 1,\n            \"rol\": \"autor principal\"\n        }\n    ],\n    \"generos\": [1, 2]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/libros",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"libros"
+							]
+						}
+					}
+				},
+				{
+					"name": "Actualizar libro",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"titulo\": \"Cien años de soledad\",\n    \"isbn\": \"978-0307474728\",\n    \"anio_publicacion\": 1967,\n    \"sinopsis\": \"Descripción actualizada de la obra maestra de Gabriel García Márquez.\",\n    \"paginas\": 417,\n    \"autores\": [\n        {\n            \"id\": 1,\n            \"rol\": \"autor principal\"\n        }\n    ],\n    \"generos\": [1, 3]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/libros/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"libros",
+								"1"
+							]
+						}
+					}
+				},
+				{
+					"name": "Eliminar libro",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/libros/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"libros",
+								"1"
+							]
+						}
+					}
+				},
+				{
+					"name": "Buscar libros",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/api/libros/buscar?titulo=soledad&autor=garcia&genero=nove",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"libros",
+								"buscar"
+							],
+							"query": [
+								{
+									"key": "titulo",
+									"value": "soledad"
+								},
+								{
+									"key": "autor",
+									"value": "garcia"
+								},
+								{
+									"key": "genero",
+									"value": "nove"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Obtener autores de un libro",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/api/libros/1/autores",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"libros",
+								"1",
+								"autores"
+							]
+						}
+					}
+				},
+				{
+					"name": "Obtener géneros de un libro",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/api/libros/1/generos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"libros",
+								"1",
+								"generos"
+							]
+						}
+					}
+				},
+				{
+					"name": "Asociar autor a libro",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rol\": \"co-autor\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/libros/1/autores/2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"libros",
+								"1",
+								"autores",
+								"2"
+							]
+						}
+					}
+				},
+				{
+					"name": "Asociar género a libro",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/libros/1/generos/4",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"libros",
+								"1",
+								"generos",
+								"4"
+							]
+						}
+					}
+				},
+				{
+					"name": "Eliminar asociación libro-autor",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/libros/1/autores/2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"libros",
+								"1",
+								"autores",
+								"2"
+							]
+						}
+					}
+				},
+				{
+					"name": "Eliminar asociación libro-género",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/libros/1/generos/4",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"libros",
+								"1",
+								"generos",
+								"4"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "General",
+			"item": [
+				{
+					"name": "Información de la API",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								""
+							]
+						}
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:5000",
+			"type": "string"
+		}
+	]
+}

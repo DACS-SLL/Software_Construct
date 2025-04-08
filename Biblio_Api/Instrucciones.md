@@ -1,4 +1,4 @@
-# Instrucciones para Ejecutar la API de Biblioteca Mejorada
+# Instrucciones para Ejecutar la API de Biblioteca
 
 ## Requisitos previos
 - Python 3.8 o superior
@@ -14,7 +14,7 @@ git clone <URL_DEL_REPOSITORIO>
 cd biblioteca_api
 ```
 
-2. **Crear un entorno virtual (opcional pero recomendado)**
+2. **Crear un entorno virtual (necesario)**
 
 ```bash
 # En Windows
@@ -23,7 +23,7 @@ venv\Scripts\activate
 
 # En macOS/Linux
 python3 -m venv venv
-venv\Scripts\activate
+source venv\Scripts\activate
 ```
 
 3. **Instalar dependencias**

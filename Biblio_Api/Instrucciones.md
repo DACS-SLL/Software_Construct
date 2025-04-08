@@ -23,7 +23,7 @@ venv\Scripts\activate
 
 # En macOS/Linux
 python3 -m venv venv
-source venv/bin/activate
+venv\Scripts\activate
 ```
 
 3. **Instalar dependencias**

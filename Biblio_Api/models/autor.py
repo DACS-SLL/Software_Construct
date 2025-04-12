@@ -5,7 +5,7 @@ class Autor(db.Model):
     __tablename__ = 'autores'
     
     id = db.Column(db.Integer, primary_key=True)
-    nombre = db.Column(db.String(50), nullable=False)
+    nombre = db.Column(db.String(50), nullable=False, unique=True)
     apellido = db.Column(db.String(50), nullable=False)
     fecha_nacimiento = db.Column(db.Date, nullable=True)
     nacionalidad = db.Column(db.String(50), nullable=True)

@@ -80,7 +80,14 @@ def create_autor():
             'message': 'Autor creado exitosamente',
             'data': nuevo_autor.to_dict()
         }), 201
-        
+
+    except IntegrityError as err:
+        db.session.rollback()
+        return jsonify({
+            'status': 'error',
+            'message': 'El nombre del autor ya existe'
+        }), 400
+
     except ValidationError as err:
         return jsonify({
             'status': 'error',

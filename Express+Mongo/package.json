@@ -1,0 +1,11 @@
+{
+  "name": "expressmongo",
+  "version": "1.0.0",
+  "description": "Proyecto de express y mongodb",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Daniel, Jerson, Juan y Fernando",
+  "license": "ISC"
+}

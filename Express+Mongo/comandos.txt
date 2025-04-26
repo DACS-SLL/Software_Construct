@@ -1,0 +1,11 @@
+Instalar dependencias:
+
+npm install express mongoose dotenv passport passport-google-oauth20 passport-github2 passport-local passport-local-mongoose express-session cors ejs
+
+Dependencias de desarrollo:
+
+npm install --save-dev nodemon jest
+
+Ejecutar con Nodemon:
+
+npx nodemon nombre.js

@@ -40,18 +40,18 @@ Todas las relaciones y claves foráneas están implementadas con SQLAlchemy.
 
 ### 1. Clonar el repositorio
 
-git clone https://github.com/DACS-SLL/Software_Construct.git
-cd Sofware_Construct/parcial_construccion
+- git clone https://github.com/DACS-SLL/Software_Construct.git
+- cd Sofware_Construct/parcial_construccion
 
 
-2. Crear entorno virtual e instalar dependencias
+### 2. Crear entorno virtual e instalar dependencias
    
-python -m venv venv
-venv\Scripts\activate
-pip install -r requirements.txt
+- python -m venv venv
+- venv\Scripts\activate
+- pip install -r requirements.txt
 
 
-3. Crear base de datos en PostgreSQL
+### 3. Crear base de datos en PostgreSQL
 
 Nombre: db_parcial_construccion
 Usuario: postgres
@@ -67,7 +67,7 @@ Ejemplo de cadena de conexión:
 postgresql://miusuario:admin@localhost/db_parcial_construccion
 (cambiar de acuerdo a su postgres)
 
-4. Aplicar migraciones
+### 4. Aplicar migraciones
 
 alembic upgrade head
 

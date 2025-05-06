@@ -53,9 +53,9 @@ Todas las relaciones y claves foráneas están implementadas con SQLAlchemy.
 
 ### 3. Crear base de datos en PostgreSQL
 
-Nombre: db_parcial_construccion
-Usuario: postgres
-Contraseña: admin (o de acuerdo a su configuración de su postgres se le cambia)
+- Nombre: db_parcial_construccion
+- Usuario: postgres
+- Contraseña: admin (o de acuerdo a su configuración de su postgres se le cambia)
 
 
 Asegúrate de editar los siguientes archivos con tu usuario y contraseña de PostgreSQL:
@@ -64,8 +64,8 @@ Asegúrate de editar los siguientes archivos con tu usuario y contraseña de Pos
 - alembic.ini
 
 Ejemplo de cadena de conexión:
-postgresql://miusuario:admin@localhost/db_parcial_construccion
-(cambiar de acuerdo a su postgres)
+- postgresql://miusuario:admin@localhost/db_parcial_construccion
+- (cambiar de acuerdo a su postgres)
 
 ### 4. Aplicar migraciones
 

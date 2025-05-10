@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Date, ForeignKey
 from sqlalchemy.orm import relationship
-from app.models.base import Base
+from app.database import Base
 
 class Postulante(Base):
     __tablename__ = "postulante"
@@ -11,3 +11,4 @@ class Postulante(Base):
     telefono = Column(String)
 
     usuario = relationship("Usuario")
+    curriculum = relationship("Curriculum", back_populates="postulante")

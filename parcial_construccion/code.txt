@@ -1,0 +1,13 @@
+from fastapi import APIRouter, Depends
+from app.core.dependencies import get_current_user
+from app.models.usuario import Usuario
+
+router = APIRouter()
+
+@router.get("/perfil")
+def obtener_perfil(usuario: Usuario = Depends(get_current_user)):
+    return {
+        "nombre": usuario.nombre,
+        "email": usuario.email,
+        "rol": usuario.rol.nombre
+    }

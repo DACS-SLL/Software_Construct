@@ -19,7 +19,22 @@ if config.config_file_name is not None:
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 from app.database import Base
-from app.models import models  # Asegúrate de que esto exista y los modelos estén cargados
+from app.models.usuario import Rol, Usuario
+from app.models.empresa import Empresa
+from app.models.postulante import Postulante
+from app.models.oferta_laboral import OfertaLaboral
+from app.models.postulacion import Postulacion
+from app.models.curriculum import Curriculum
+from app.models.educacion import Educacion
+from app.models.experiencia_laboral import ExperienciaLaboral
+from app.models.entrevista import Entrevista
+from app.models.habilidad import Habilidad
+from app.models.notificacion import Notificacion
+from app.models.mensaje import Mensaje
+from app.models.token_blacklist import TokenBlacklist
+from app.models.evaluacion import Evaluacion
+from app.models.registro_actividad import RegistroActividad
+from app.models.categoria import Categoria  # Asegúrate de que esto exista y los modelos estén cargados
 
 target_metadata = Base.metadata
 

@@ -10,4 +10,4 @@ class Curriculum(Base):
     ruta_archivo = Column(String)
     fecha_subida = Column(DateTime, default=datetime.utcnow)
 
-    postulante = relationship("Postulante")
+    postulante = relationship("Postulante", back_populates="curriculum") 

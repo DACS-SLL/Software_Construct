@@ -1,7 +1,7 @@
 # app/models/usuario.py
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
-from app.models.base import Base
+from app.database import Base
 from datetime import datetime
 
 class Rol(Base):

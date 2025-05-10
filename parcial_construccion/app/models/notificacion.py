@@ -5,6 +5,7 @@ from datetime import datetime
 
 class Notificacion(Base):
     __tablename__ = "notificacion"
+
     id = Column(Integer, primary_key=True, index=True)
     usuario_id = Column(Integer, ForeignKey("usuario.id"))
     mensaje = Column(Text)

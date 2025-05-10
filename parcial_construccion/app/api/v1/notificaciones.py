@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from app.services.notifica import crear_notificacion, obtener_notificaciones_por_usuario, marcar_como_leida
-from app.schemas.notificacion import NotificacionCreate, NotificacionOut
+from app.schemas.notificaciones import NotificacionCreate, NotificacionOut
 from app.database import get_db
 from app.core.dependencies import require_role
 
@@ -10,7 +10,8 @@ router = APIRouter(prefix="/notificaciones", tags=["Notificaciones"])
 # Crear notificación
 @router.post("/", response_model=NotificacionOut)
 def crear_notificacion_route(notificacion: NotificacionCreate, db: Session = Depends(get_db), usuario_actual: str = Depends(require_role(["admin", "empleador"]))):
-    nueva_notificacion = crear_notificacion(db, notificacion.usuario_id, notificacion.mensaje)
+    nueva_notificacion = crear_notificacion(db, notificacion, usuario_id=notificacion.usuario_id)
+
     return nueva_notificacion
 
 # Obtener notificaciones de un usuario

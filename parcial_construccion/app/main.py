@@ -1,6 +1,6 @@
 ### main.py
 from fastapi import FastAPI
-from app.api.v1 import empresa, auth, postulante, oferta_laboral, categoria, postulacion  # Rutas ejemplo
+from app.api.v1 import empresa, auth, postulante, oferta_laboral, categoria, postulacion, curriculum, educacion, experiencia_laboral, entrevista  # Rutas ejemplo
 from app.database import engine, Base
 
 # Crear tablas si no existen
@@ -14,6 +14,8 @@ app.include_router(postulante.router, prefix="/api/v1", tags=["Postulantes"])
 app.include_router(categoria.router, prefix="/api/v1", tags=["Categorías"])
 app.include_router(oferta_laboral.router, prefix="/api/v1", tags=["Ofertas Laborales"])
 app.include_router(postulacion.router, prefix="/api/v1", tags=["Postulaciones"])
+app.include_router(educacion.router, prefix="/api/v1", tags=["Educación"])
+app.include_router(curriculum.router, prefix="/api/v1", tags=["Currículums"])
+app.include_router(experiencia_laboral.router, prefix="/api/v1", tags=["Experiencia Laboral"])
+app.include_router(entrevista.router, prefix="/api/v1", tags=["Entrevistas"])
 # Incluir rutas
-#app.include_router(usuario.router, prefix="/api/v1/usuarios", tags=["Usuarios"])
-#app.include_router(oferta.router, prefix="/api/v1/ofertas", tags=["Ofertas"])

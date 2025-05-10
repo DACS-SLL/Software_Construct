@@ -1,0 +1,89 @@
+{
+  "info": {
+    "name": "Notificación API",
+    "_postman_id": "b8bb617e-650e-47a9-8c91-1bfcdaef7d5f",
+    "description": "Colección de endpoints para gestionar las notificaciones",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Crear Notificación",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"usuario_id\": 1,\n  \"mensaje\": \"Tienes una nueva oferta disponible\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/notificaciones/",
+          "host": ["{{base_url}}"],
+          "path": ["notificaciones", ""]
+        }
+      }
+    },
+    {
+      "name": "Obtener Notificaciones por Usuario",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/notificaciones/usuario/1",
+          "host": ["{{base_url}}"],
+          "path": ["notificaciones", "usuario", "1"]
+        }
+      }
+    },
+    {
+      "name": "Marcar Notificación como Leída",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/notificaciones/leida/1",
+          "host": ["{{base_url}}"],
+          "path": ["notificaciones", "leida", "1"]
+        }
+      }
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000"
+    },
+    {
+      "key": "token",
+      "value": "TU_TOKEN_AQUI"
+    }
+  ]
+}

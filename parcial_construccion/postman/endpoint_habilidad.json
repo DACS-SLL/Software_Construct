@@ -1,0 +1,129 @@
+{
+  "info": {
+    "name": "Habilidad API",
+    "_postman_id": "f1e6e6fc-b79e-4b9c-9f98-abc123456789",
+    "description": "Colección de endpoints para el modelo Habilidad",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Crear Habilidad",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Trabajo en equipo\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/habilidades/",
+          "host": ["{{base_url}}"],
+          "path": ["habilidades", ""]
+        }
+      }
+    },
+    {
+      "name": "Obtener Todas las Habilidades",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/habilidades/",
+          "host": ["{{base_url}}"],
+          "path": ["habilidades", ""]
+        }
+      }
+    },
+    {
+      "name": "Obtener Habilidad por ID",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/habilidades/1",
+          "host": ["{{base_url}}"],
+          "path": ["habilidades", "1"]
+        }
+      }
+    },
+    {
+      "name": "Actualizar Habilidad",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Pensamiento crítico\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/habilidades/1",
+          "host": ["{{base_url}}"],
+          "path": ["habilidades", "1"]
+        }
+      }
+    },
+    {
+      "name": "Eliminar Habilidad",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/habilidades/1",
+          "host": ["{{base_url}}"],
+          "path": ["habilidades", "1"]
+        }
+      }
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000"
+    },
+    {
+      "key": "token",
+      "value": "TU_TOKEN_AQUI"
+    }
+  ]
+}

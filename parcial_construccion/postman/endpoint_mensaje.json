@@ -1,0 +1,102 @@
+{
+  "info": {
+    "name": "Mensaje API",
+    "_postman_id": "b1d5e5f3-f914-4b57-b847-45b43c0b5029",
+    "description": "Colección de endpoints para gestionar los mensajes entre usuarios",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Crear Mensaje",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"emisor_id\": 1,\n  \"receptor_id\": 2,\n  \"contenido\": \"Hola, ¿cómo estás?\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/mensajes/",
+          "host": ["{{base_url}}"],
+          "path": ["mensajes", ""]
+        }
+      }
+    },
+    {
+      "name": "Obtener Mensajes por Usuario",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/mensajes/usuario/1",
+          "host": ["{{base_url}}"],
+          "path": ["mensajes", "usuario", "1"]
+        }
+      }
+    },
+    {
+      "name": "Obtener Mensajes por Emisor",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/mensajes/emisor/1",
+          "host": ["{{base_url}}"],
+          "path": ["mensajes", "emisor", "1"]
+        }
+      }
+    },
+    {
+      "name": "Obtener Mensajes por Receptor",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/mensajes/receptor/2",
+          "host": ["{{base_url}}"],
+          "path": ["mensajes", "receptor", "2"]
+        }
+      }
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000"
+    },
+    {
+      "key": "token",
+      "value": "TU_TOKEN_AQUI"
+    }
+  ]
+}

@@ -1,12 +1,12 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
 
-# ------
-# Cambia estos datos a los de tu PostgreSQL local
-DATABASE_URL = "postgresql://postgres:admin@localhost/db_parcial_construccion"
-#------
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 # Motor y sesión
 engine = create_engine(DATABASE_URL)

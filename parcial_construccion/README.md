@@ -87,3 +87,33 @@ parcial_construccion/
 ├── requirements.txt         # Dependencias
 └── README.md              
 
+## Esta parte aún no esta completa:
+
+# JobHub Backend API
+
+Proyecto backend construido con FastAPI y PostgreSQL.
+
+## Tecnologías usadas:
+- FastAPI
+- PostgreSQL
+- SQLAlchemy + Alembic
+- JWT para autenticación
+
+## Configuración
+Crear un archivo `.env` con las siguientes variables:
+```
+DATABASE_URL=postgresql://usuario:password@localhost:5432/jobhub_db
+SECRET_KEY=clave-secreta-supersegura
+```
+
+## Ejecutar el servidor
+```bash
+uvicorn app.main:app --reload
+```
+
+## Migraciones con Alembic
+```bash
+alembic init alembic
+alembic revision --autogenerate -m "mensaje"
+alembic upgrade head
+```

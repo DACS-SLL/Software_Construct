@@ -1,0 +1,58 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+env/
+.venv/
+.env/
+
+# Python environment files
+*.env
+.env.*
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+
+# Logs and runtime files
+*.log
+*.pid
+*.sqlite3
+
+# Pytest / coverage
+htmlcov/
+.tox/
+.coverage
+.cache
+pytest_cache/
+
+# Alembic
+alembic/versions/*.pyc
+alembic/__pycache__/
+alembic/versions/__pycache__/
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Database
+*.db
+*.sqlite
+
+# Swagger / Docs
+openapi.json
+openapi.yaml
+
+# Build / distribution
+build/
+dist/
+*.egg-info/
+
+# System files
+.DS_Store
+Thumbs.db

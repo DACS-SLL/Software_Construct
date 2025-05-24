@@ -164,17 +164,18 @@ export default {
 
     const handleReactivate = async (autor) => {
       try {
-        await axios.put(
+        const response = await axios.put(
           `http://localhost:5000/api/autores/${autor.id}`,
-          { activo: true },
+          { activo: true }, // Enviar el estado actualizado
           {
             headers: {
               Authorization: 'Bearer ' + localStorage.getItem('token')
             }
           }
         )
-        await fetchAutores()
-      } catch {
+        console.log('Autor reactivado:', response.data) // Depuración
+        await fetchAutores() // Actualiza la lista de autores
+      } catch (err) {
         console.error('Error al reactivar el autor:', err)
         error.value = 'Error al reactivar el autor'
       }

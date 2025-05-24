@@ -137,11 +137,12 @@ export default {
       delete datosEnviados.estado;
       delete datosEnviados.fecha_actualizacion;
       delete datosEnviados.fecha_creacion;
-      delete datosEnviados.id;
+      delete datosEnviados.id; // God
 
       console.log('Datos enviados:', datosEnviados);
       emit('submit', datosEnviados);
       emit('close')
+
     }
 
     return {

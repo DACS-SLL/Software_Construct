@@ -55,6 +55,21 @@ export default {
     const modalVisible = ref(false)
     const selectedAutor = ref(null)
 
+    const obtenerAutoresInactivos = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/autores?activo=false');
+        const data = await response.json();
+        if (data.status === 'success') {
+          console.log('Autores inactivos:', data.data);
+          // Actualiza la tabla con los autores inactivos
+        } else {
+          console.error('Error al obtener autores inactivos:', data.message);
+        }
+      } catch (error) {
+        console.error('Error en la solicitud:', error);
+      }
+    };
+
 
     const fetchAutores = async () => {
       try {
@@ -151,7 +166,7 @@ export default {
       try {
         await axios.put(
           `http://localhost:5000/api/autores/${autor.id}`,
-          { ...autor, activo: true },
+          { activo: true },
           {
             headers: {
               Authorization: 'Bearer ' + localStorage.getItem('token')
@@ -160,6 +175,7 @@ export default {
         )
         await fetchAutores()
       } catch {
+        console.error('Error al reactivar el autor:', err)
         error.value = 'Error al reactivar el autor'
       }
     }

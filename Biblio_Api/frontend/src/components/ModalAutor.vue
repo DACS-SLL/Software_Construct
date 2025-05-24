@@ -88,7 +88,7 @@
 
 <script>
 import ModalBase from './ModalBase.vue'
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 
 export default {
   name: 'ModalAutor',
@@ -145,11 +145,13 @@ export default {
 
     }
 
+    const title = computed(() => (props.autor ? 'Editar Autor' : 'Crear Autor'));
+
     return {
       form,
       handleSubmit,
-      title: props.autor ? 'Editar Autor' : 'Crear Autor',
-      submitText: props.autor ? 'Actualizar' : 'Crear'
+      title,
+      submitText: computed(() => (props.autor ? 'Actualizar' : 'Crear'))
     }
   }
 }

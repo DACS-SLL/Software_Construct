@@ -26,8 +26,15 @@ autor_schema = AutorSchema()
 
 @autores_bp.route('/', methods=['GET'])
 def get_autores():
-    """Obtener todos los autores activos"""
-    autores = Autor.query.filter_by(activo=True).all()
+    """Obtener autores, filtrando por estado si se proporciona"""
+    estado = request.args.get('activo')  # Obtén el parámetro de consulta "activo"
+    
+    if estado is not None:
+        estado = estado.lower() == 'true'  # Convierte el valor a booleano
+        autores = Autor.query.filter_by(activo=estado).all()
+    else:
+        autores = Autor.query.all()  # Si no se proporciona, devuelve todos
+
     return jsonify({
         'status': 'success',
         'data': [autor.to_dict() for autor in autores]

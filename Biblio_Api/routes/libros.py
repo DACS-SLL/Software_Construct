@@ -21,6 +21,7 @@ class LibroSchema(Schema):
     paginas = fields.Integer(required=False, allow_none=True)
     autores = fields.List(fields.Dict(keys=fields.Str(), values=fields.Raw()), required=False)
     generos = fields.List(fields.Integer(), required=False)
+    activo = fields.Boolean(required=False, missing=True)
 
 libro_schema = LibroSchema()
 
@@ -28,12 +29,20 @@ libro_schema = LibroSchema()
 
 @libros_bp.route('/', methods=['GET'])
 def get_libros():
-    """Obtener todos los libros activos"""
-    libros = Libro.query.filter_by(activo=True).all()
+    """Obtener libros, filtrando por estado si se proporciona"""
+    estado = request.args.get('activo')
+
+    if estado is not None:
+        estado = estado.lower() == 'true'
+        libros = Libro.query.filter_by(activo=estado).all()
+    else:
+        libros = Libro.query.all()
+
     return jsonify({
         'status': 'success',
         'data': [libro.to_dict(include_autores=True, include_generos=True) for libro in libros]
     }), 200
+
 
 @libros_bp.route('/<int:libro_id>', methods=['GET'])
 def get_libro(libro_id):
@@ -80,7 +89,8 @@ def create_libro():
             isbn=datos.get('isbn'),
             anio_publicacion=datos.get('anio_publicacion'),
             sinopsis=datos.get('sinopsis'),
-            paginas=datos.get('paginas')
+            paginas=datos.get('paginas'),
+            activo=datos.get('activo', True)
         )
         
         # Guardar en la base de datos

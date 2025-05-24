@@ -1,18 +1,35 @@
 <template>
   <base-list
-    title="Libros"
-    :headers="['Título', 'Autores', 'Géneros', 'Año Publicación', 'ISBN', 'Páginas', 'Estado']"
-    :items="libros"
+    title="Libros Activos"
+    :headers="['Titulo', 'Autores', 'Generos', 'Anio_Publicacion', 'ISBN', 'Paginas', 'Estado']"
+    :items="librosActivos"
     :loading="loading"
     :error="error"
+    :action-label="'Desactivar'"
+    :create-label="'Crear Nuevo'"
     @create="handleCreate"
     @edit="handleEdit"
-    @delete="handleDelete"
+    @delete="handleDeactivate"
+  />
+
+  <base-list
+    title="Libros No disponibles"
+    :headers="['Titulo', 'Autores', 'Generos', 'Anio_Publicacion', 'ISBN', 'Paginas', 'Estado']"
+    :items="librosInactivos"
+    :loading="loading"
+    :error="null"
+    :action-label="'Reactivar'"
+    :create-label="'Reactivar Libro'"
+    :show-create="false"
+    @edit="handleEdit"
+    @delete="handleReactivate"
   />
 
   <modal-libro
     :show="modalVisible"
     :libro="selectedLibro"
+    :autoresActivos="autoresActivos"
+    :generosDisponibles="generosDisponibles"
     @submit="handleModalSubmit"
     @close="modalVisible = false"
   />
@@ -24,85 +41,217 @@ import ModalLibro from './ModalLibro.vue'
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 
+const isAuthenticated = () => !!localStorage.getItem('token')
+
 export default {
   name: 'Libros',
   components: { BaseList, ModalLibro },
   setup() {
     const libros = ref([])
+    const librosActivos = ref([])
+    const librosInactivos = ref([])
     const loading = ref(false)
     const error = ref(null)
 
-    const fetchLibros = async () => {
-      try {
-        loading.value = true
-        const response = await axios.get('http://localhost:5000/api/libros')
-        libros.value = response.data.data.map(libro => ({
-          ...libro,
-          autores: libro.autores ? libro.autores.map(autor => `${autor.nombre} ${autor.apellido}`).join(', ') : '',
-          generos: libro.generos ? libro.generos.map(genero => genero.nombre).join(', ') : '',
-          estado: libro.activo ? 'Activo' : 'Inactivo'
-        }))
-        error.value = null
-      } catch (err) {
-        error.value = 'Error al cargar los libros'
-      } finally {
-        loading.value = false
-      }
-    }
-
+    const autoresActivos = ref([])
+    const generosDisponibles = ref([])
     const modalVisible = ref(false)
     const selectedLibro = ref(null)
 
-    const handleCreate = () => {
-      modalVisible.value = true
-      selectedLibro.value = null
-    }
-
-    const handleEdit = (libro) => {
-      modalVisible.value = true
-      selectedLibro.value = libro
-    }
-
-    const handleDelete = async (libro) => {
+    const fetchAutoresActivos = async () => {
       try {
-        await axios.delete(`http://localhost:5000/api/libros/${libro.id}`)
-        await fetchLibros()
+        const response = await axios.get('http://localhost:5000/api/autores?activo=true')
+        autoresActivos.value = response.data.data
+        console.log('Autores activos:', autoresActivos.value)
       } catch (err) {
-        error.value = 'Error al eliminar el libro'
+        console.error('Error al cargar autores activos:', err)
       }
     }
 
-    onMounted(fetchLibros)
+    const obtenerLibrosInactivos = async () => {
+  try {
+    const response = await axios.get('http://localhost:5000/api/libros?activo=false', {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      }
+    })
+    const data = response.data.data
+    console.log('Libros inactivos:', data) // Depuración
+    librosInactivos.value = data.map(libro => ({
+      ...libro,
+      autores: libro.autores?.map(a => `${a.nombre} ${a.apellido}`).join(', ') || '',
+      generos: libro.generos?.map(g => g.nombre).join(', ') || '',
+      estado: libro.activo ? 'Activo' : 'Inactivo'
+    }))
+  } catch (error) {
+    console.error('Error al cargar libros inactivos:', error)
+    error.value = 'Error al cargar libros inactivos'
+  }
+}
 
-    const handleModalSubmit = async (formData) => {
+    const fetchGenerosDisponibles = async () => {
       try {
-        loading.value = true
-        if (selectedLibro.value) {
-          // Actualizar libro
-          await axios.put(`http://localhost:5000/api/libros/${selectedLibro.value.id}`, formData)
-        } else {
-          // Crear nuevo libro
-          await axios.post('http://localhost:5000/api/libros', formData)
-        }
-        await fetchLibros()
+        const response = await axios.get('http://localhost:5000/api/generos/')
+        generosDisponibles.value = response.data.data
+        console.log('Géneros disponibles:', generosDisponibles.value)
       } catch (err) {
-        error.value = 'Error al guardar el libro'
+        console.error('Error al cargar géneros disponibles:', err)
+      }
+    }
+
+    const fetchLibros = async () => {
+      try {
+        if (!isAuthenticated()) {
+          error.value = 'No estás autenticado'
+          return
+        }
+
+        loading.value = true
+        const res = await axios.get('http://localhost:5000/api/libros/', {
+          headers: {
+            Authorization: 'Bearer ' + localStorage.getItem('token')
+          }
+        })
+
+        const data = res.data.data.map(libro => ({
+          ...libro,
+          autores: libro.autores?.map(a => `${a.nombre} ${a.apellido}`).join(', ') || '',
+          generos: libro.generos?.map(g => g.nombre).join(', ') || '',
+          estado: libro.activo ? 'Activo' : 'Inactivo'
+        }))
+
+        libros.value = data
+        librosActivos.value = data.filter(l => l.activo)
+        librosInactivos.value = data.filter(l => !l.activo)
+        error.value = null
+      } catch (err) {
+        error.value =
+          err.response?.status === 401
+            ? 'Sesión expirada. Por favor, inicia sesión nuevamente'
+            : 'Error al cargar los libros'
       } finally {
         loading.value = false
       }
     }
 
+    const handleCreate = async () => {
+      await fetchAutoresActivos()
+      await fetchGenerosDisponibles()
+      selectedLibro.value = null
+      modalVisible.value = true
+    }
+
+    const handleEdit = async (libro) => {
+      await fetchAutoresActivos()
+      await fetchGenerosDisponibles()
+      selectedLibro.value = { ...libro }
+      modalVisible.value = true
+    }
+
+    const handleDeactivate = async (libro) => {
+      try {
+        await axios.delete(`http://localhost:5000/api/libros/${libro.id}`, {
+          headers: {
+            Authorization: 'Bearer ' + localStorage.getItem('token')
+          }
+        })
+        await fetchLibros()
+      } catch {
+        error.value = 'Error al desactivar el libro'
+      }
+    }
+
+    const handleReactivate = async (libro) => {
+      try {
+        await axios.put(
+          `http://localhost:5000/api/libros/${libro.id}`,
+          { activo: true },
+          {
+            headers: {
+              Authorization: 'Bearer ' + localStorage.getItem('token')
+            }
+          }
+        )
+        await fetchLibros()
+      } catch (err) {
+        error.value = 'Error al reactivar el libro'
+      }
+    }
+
+    const handleModalSubmit = async (formData) => {
+      console.log('Datos recibidos del modal:', formData)
+      try {
+        loading.value = true
+
+        // Normalización si es necesario
+        if (formData.anio_publicacion) {
+          formData.anio_publicacion = parseInt(formData.anio_publicacion)
+        }
+
+        const config = {
+          headers: {
+            Authorization: 'Bearer ' + localStorage.getItem('token'),
+            'Content-Type': 'application/json'
+          }
+        }
+
+        if (selectedLibro.value) {
+          // EDITAR
+          await axios.put(
+            `http://localhost:5000/api/libros/${selectedLibro.value.id}`,
+            formData,
+            config
+          )
+        } else {
+          // CREAR
+          await axios.post(
+            'http://localhost:5000/api/libros/',
+            formData,
+            config
+          )
+        }
+
+        await fetchLibros()
+        console.log('Datos enviados:', formData)
+        modalVisible.value = false
+      } catch (err) {
+        if (err.response?.data?.detail?.includes('llave duplicada')) {
+          error.value = 'Ya existe un libro con ese ISBN'
+        } else if (err.response?.status === 400) {
+          error.value = 'Datos inválidos o incompletos'
+        } else {
+          error.value = 'Error al guardar el libro'
+        }
+        modalVisible.value = true
+      } finally {
+        loading.value = false
+      }
+    }
+
+    onMounted(() => {
+      fetchAutoresActivos()
+      fetchGenerosDisponibles()  
+      fetchLibros()
+      obtenerLibrosInactivos()
+    })
+
     return {
       libros,
+      librosActivos,
+      librosInactivos,
       loading,
       error,
-      handleCreate,
-      handleEdit,
-      handleDelete,
       modalVisible,
       selectedLibro,
+      autoresActivos,
+      generosDisponibles, 
+      handleCreate,
+      handleEdit,
+      handleDeactivate,
+      handleReactivate,
       handleModalSubmit
     }
   }
 }
 </script>
+

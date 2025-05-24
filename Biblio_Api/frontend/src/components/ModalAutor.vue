@@ -107,7 +107,6 @@ export default {
       activo: true
     })
 
-    // Actualizar el formulario cuando se recibe un autor
     watch(() => props.autor, (newAutor) => {
       if (newAutor) {
         form.value = {

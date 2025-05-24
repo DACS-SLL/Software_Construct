@@ -1,7 +1,7 @@
 <template>
   <base-list
     title="Autores Activos"
-    :headers="['Nombre', 'Apellido', 'Nacionalidad', 'Fecha Nacimiento', 'Estado']"
+    :headers="['Nombre', 'Apellido', 'Nacionalidad', 'Fecha_Nacimiento', 'Estado']"
     :items="autoresActivos"
     :loading="loading"
     :error="error"
@@ -14,7 +14,7 @@
 
   <base-list
     title="Autores Inactivos"
-    :headers="['Nombre', 'Apellido', 'Nacionalidad', 'Fecha Nacimiento', 'Estado']"
+    :headers="['Nombre', 'Apellido', 'Nacionalidad', 'Fecha_Nacimiento', 'Estado']"
     :items="autoresInactivos"
     :loading="loading"
     :error="null"
@@ -55,6 +55,7 @@ export default {
     const modalVisible = ref(false)
     const selectedAutor = ref(null)
 
+
     const fetchAutores = async () => {
       try {
         if (!isAuthenticated()) {
@@ -63,7 +64,7 @@ export default {
         }
 
         loading.value = true
-        const res = await axios.get('http://localhost:5000/api/autores/', {
+        const res = await axios.get(`http://localhost:5000/api/autores/`, {
           headers: {
             Authorization: 'Bearer ' + localStorage.getItem('token')
           }
@@ -71,28 +72,34 @@ export default {
 
         // Función para formatear fechas
         const formatFecha = (fecha) => {
-          if (!fecha) return ''
+          if (!fecha) return '';
+          
           try {
-            // Intentar parsear la fecha en diferentes formatos
-            const date = new Date(fecha)
+            // Intenta parsear la fecha directamente
+            let date = new Date(fecha);
+            
+            // Si es inválida, intenta con formato YYYY-MM-DD
             if (isNaN(date.getTime())) {
-              // Si no se puede parsear, intentar con formato YYYY-MM-DD
-              const parts = fecha.split('-')
+              const parts = String(fecha).split('-');
               if (parts.length === 3) {
-                return new Date(parts[0], parts[1] - 1, parts[2])
+                date = new Date(parts[0], parts[1] - 1, parts[2]);
+                if (isNaN(date.getTime())) return ''; // Si aún es inválida
+              } else {
+                return '';
               }
-              return ''
             }
+            
+            // Formatear a día/mes/año (ej: 01/01/2023)
             return date.toLocaleDateString('es-ES', {
               year: 'numeric',
               month: '2-digit',
               day: '2-digit'
-            })
+            });
           } catch (error) {
-            console.error('Error formateando fecha:', error)
-            return ''
+            console.error('Error formateando fecha:', error);
+            return '';
           }
-        }
+        };
 
         const data = res.data.data.map(autor => ({
           ...autor,
@@ -143,7 +150,7 @@ export default {
     const handleReactivate = async (autor) => {
       try {
         await axios.put(
-          'http://localhost:5000/api/autores/${autor.id}',
+          `http://localhost:5000/api/autores/${autor.id}`,
           { ...autor, activo: true },
           {
             headers: {
@@ -180,7 +187,7 @@ export default {
         if (selectedAutor.value) {
           // EDITAR AUTOR EXISTENTE
           await axios.put(
-            'http://localhost:5000/api/autores/${selectedAutor.value.id}',
+            `http://localhost:5000/api/autores/${selectedAutor.value.id}`,
             { ...formData },
             config
           )

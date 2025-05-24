@@ -112,7 +112,7 @@ export default {
       if (newAutor) {
         form.value = {
           ...newAutor,
-          fecha_nacimiento: newAutor.fecha_nacimiento
+          fecha_nacimiento: newAutor.fecha_nacimiento && !isNaN(Date.parse(newAutor.fecha_nacimiento))
             ? new Date(newAutor.fecha_nacimiento).toISOString().split('T')[0]
             : ''
         }
@@ -129,7 +129,18 @@ export default {
     }, { immediate: true })
 
     const handleSubmit = () => {
-      emit('submit', form.value)
+      if (!form.value.nombre || !form.value.apellido) {
+        return alert('Nombre y apellido son obligatorios');
+      }
+
+      const datosEnviados = { ...form.value };
+      delete datosEnviados.estado;
+      delete datosEnviados.fecha_actualizacion;
+      delete datosEnviados.fecha_creacion;
+      delete datosEnviados.id;
+
+      console.log('Datos enviados:', datosEnviados);
+      emit('submit', datosEnviados);
       emit('close')
     }
 

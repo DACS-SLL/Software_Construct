@@ -18,6 +18,7 @@ class AutorSchema(Schema):
     fecha_nacimiento = fields.Date(required=False, allow_none=True)
     nacionalidad = fields.String(required=False, allow_none=True, validate=validate.Length(max=50))
     biografia = fields.String(required=False, allow_none=True)
+    activo = fields.Boolean(required=False, missing=True)
 
 autor_schema = AutorSchema()
 
@@ -104,35 +105,36 @@ def update_autor(autor_id):
             'status': 'error',
             'message': 'El contenido debe ser JSON'
         }), 415
-    
+
     autor = Autor.query.get_or_404(autor_id, description='Autor no encontrado')
-    
-    if not autor.activo:
-        return jsonify({
-            'status': 'error',
-            'message': 'Autor no encontrado'
-        }), 404
-    
+
     try:
-        # Validar datos de entrada
-        datos = autor_schema.load(request.json)
-        
-        # Actualizar autor
-        autor.nombre = datos['nombre']
-        autor.apellido = datos['apellido']
-        autor.fecha_nacimiento = datos.get('fecha_nacimiento')
-        autor.nacionalidad = datos.get('nacionalidad')
-        autor.biografia = datos.get('biografia')
-        
-        # Guardar cambios
+        datos = autor_schema.load(request.json, partial=True)
+
+        if not autor.activo and not datos.get('activo', False):
+            return jsonify({
+                'status': 'error',
+                'message': 'Autor no encontrado'
+            }), 404
+
+        autor.nombre = datos.get('nombre', autor.nombre)
+        autor.apellido = datos.get('apellido', autor.apellido)
+        autor.fecha_nacimiento = datos.get('fecha_nacimiento', autor.fecha_nacimiento)
+        autor.nacionalidad = datos.get('nacionalidad', autor.nacionalidad)
+        autor.biografia = datos.get('biografia', autor.biografia)
+
+        # Nueva línea para permitir actualizar el estado
+        if 'activo' in datos:
+            autor.activo = datos['activo']
+
         db.session.commit()
-        
+
         return jsonify({
             'status': 'success',
             'message': 'Autor actualizado exitosamente',
             'data': autor.to_dict()
         }), 200
-        
+
     except ValidationError as err:
         return jsonify({
             'status': 'error',

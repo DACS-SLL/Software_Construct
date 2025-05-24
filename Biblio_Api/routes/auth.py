@@ -14,6 +14,7 @@ class RegistroSchema(Schema):
     password = fields.String(required=True, validate=validate.Length(min=6))
     nombre = fields.String(required=False, allow_none=True)
     apellido = fields.String(required=False, allow_none=True)
+    rol = fields.String(validate=validate.OneOf(['admin', 'editor', 'usuario']), default='usuario')
 
 class LoginSchema(Schema):
     username = fields.String(required=True)
@@ -53,7 +54,8 @@ def register():
             username=datos['username'],
             email=datos['email'],
             nombre=datos.get('nombre'),
-            apellido=datos.get('apellido')
+            apellido=datos.get('apellido'),
+            rol=datos.get('rol', 'usuario')
         )
         nuevo_usuario.password = datos['password']  # Esto utiliza el setter que hashea la contraseña
         

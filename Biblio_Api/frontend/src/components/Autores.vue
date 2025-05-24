@@ -6,6 +6,7 @@
     :loading="loading"
     :error="error"
     :action-label="'Desactivar'"
+    :create-label="'Crear Nuevo'"
     @create="handleCreate"
     @edit="handleEdit"
     @delete="handleDeactivate"
@@ -18,6 +19,8 @@
     :loading="loading"
     :error="null"
     :action-label="'Reactivar'"
+    :create-label="'Reactivar Autor'"
+    :show-create="false"
     @edit="handleEdit"
     @delete="handleReactivate"
   />
@@ -66,11 +69,34 @@ export default {
           }
         })
 
+        // Función para formatear fechas
+        const formatFecha = (fecha) => {
+          if (!fecha) return ''
+          try {
+            // Intentar parsear la fecha en diferentes formatos
+            const date = new Date(fecha)
+            if (isNaN(date.getTime())) {
+              // Si no se puede parsear, intentar con formato YYYY-MM-DD
+              const parts = fecha.split('-')
+              if (parts.length === 3) {
+                return new Date(parts[0], parts[1] - 1, parts[2])
+              }
+              return ''
+            }
+            return date.toLocaleDateString('es-ES', {
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit'
+            })
+          } catch (error) {
+            console.error('Error formateando fecha:', error)
+            return ''
+          }
+        }
+
         const data = res.data.data.map(autor => ({
           ...autor,
-          fecha_nacimiento: autor.fecha_nacimiento
-            ? new Date(autor.fecha_nacimiento).toISOString().split('T')[0]
-            : '',
+          fecha_nacimiento: formatFecha(autor.fecha_nacimiento),
           estado: autor.activo ? 'Activo' : 'Inactivo'
         }))
 
@@ -100,9 +126,8 @@ export default {
 
     const handleDeactivate = async (autor) => {
       try {
-        await axios.put(
-          'http://localhost:5000/api/autores/${autor.id}',
-          { ...autor, activo: false },
+        await axios.delete(
+          `http://localhost:5000/api/autores/${autor.id}`,
           {
             headers: {
               Authorization: 'Bearer ' + localStorage.getItem('token')
@@ -136,11 +161,13 @@ export default {
       try {
         loading.value = true
 
-        // Normaliza la fecha
+        // Normaliza la fecha a formato YYYY-MM-DD
         if (formData.fecha_nacimiento) {
-          formData.fecha_nacimiento = new Date(formData.fecha_nacimiento)
-            .toISOString()
-            .split('T')[0]
+          const date = new Date(formData.fecha_nacimiento)
+          formData.fecha_nacimiento = date.toISOString().split('T')[0]
+        } else {
+          // Si no hay fecha, enviar null
+          formData.fecha_nacimiento = null
         }
 
         const config = {

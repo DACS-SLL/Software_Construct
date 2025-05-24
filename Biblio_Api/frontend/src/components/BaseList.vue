@@ -1,8 +1,8 @@
 <template>
   <div class="card">
     <h2>{{ title }}</h2>
-    <div class="actions">
-      <button class="btn btn-primary" @click="handleCreate">Crear Nuevo</button>
+    <div class="actions" v-if="showCreate">
+      <button class="btn btn-primary" @click="handleCreate">{{ createLabel }}</button>
     </div>
 
     <div class="loading" v-if="loading">
@@ -29,7 +29,7 @@
           </td>
           <td>
             <button class="btn btn-secondary" @click="handleEdit(item)">Editar</button>
-            <button class="btn btn-danger" @click="handleDelete(item)">Eliminar</button>
+            <button class="btn btn-danger" @click="handleDelete(item)">{{ actionLabel }}</button>
           </td>
         </tr>
       </tbody>
@@ -49,7 +49,19 @@ export default {
     headers: Array,
     items: Array,
     loading: Boolean,
-    error: String
+    error: String,
+    actionLabel: {
+      type: String,
+      default: 'Eliminar'
+    },
+    showCreate: {
+      type: Boolean,
+      default: true
+    },
+    createLabel: {
+      type: String,
+      default: 'Crear Nuevo'
+    }
   },
   methods: {
     handleCreate() {

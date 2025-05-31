@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Depends, HTTPException, status, Body
+from fastapi.middleware.cors import CORSMiddleware  # ← AGREGAR ESTA LÍNEA
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from datetime import date, datetime
@@ -16,6 +17,14 @@ app = FastAPI(
     version="1.0.0"
 )
 
+# ← AGREGAR ESTAS LÍNEAS DESPUÉS DE CREAR LA APP:
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Permite todos los orígenes
+    allow_credentials=True,
+    allow_methods=["*"],   # Permite todos los métodos (GET, POST, etc.)
+    allow_headers=["*"],   # Permite todos los headers
+)
 # Dependency
 def get_db():
     db = SessionLocal()
@@ -62,7 +71,7 @@ class EmpresaBase(BaseModel):
     rubro: Optional[str] = None
     direccion: Optional[str] = None
     descripcion: Optional[str] = None
-    usuario_id: int
+    usuario_id: Optional[int] = None
 
 class EmpresaCreate(EmpresaBase):
     pass
@@ -78,7 +87,7 @@ class PostulanteBase(BaseModel):
     nombre_completo: str
     fecha_nacimiento: Optional[date] = None
     telefono: Optional[str] = None
-    usuario_id: int
+    usuario_id: Optional[int] = None
 
 class PostulanteCreate(PostulanteBase):
     pass
@@ -352,7 +361,7 @@ def create_usuario(usuario: UsuarioCreate, db: Session = Depends(get_db)):
     db_usuario = models.Usuario(
         nombre=usuario.nombre,
         email=usuario.email,
-        contraseña_hash=usuario.contraseña,  # En producción: hashear la contraseña
+        contraseña=usuario.contraseña,  # En producción: hashear la contraseña
         activo=usuario.activo,
         rol_id=usuario.rol_id
     )

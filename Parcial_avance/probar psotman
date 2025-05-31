@@ -1,0 +1,213 @@
+# Guía rápida para probar la API en Postman
+
+## 1. Preparación
+
+Asegúrate de que la aplicación esté en ejecución:
+```bash
+python main.py
+```
+
+Abre Postman y crea una colección nueva llamada "Plataforma de Empleo"
+
+## 2. Secuencia de pruebas básicas
+
+### Paso 1: Crear un rol
+
+**Método**: POST  
+**URL**: http://localhost:8000/roles/  
+**Body (JSON)**:
+```json
+{
+  "nombre": "Administrador"
+}
+```
+
+Envía la petición y guarda el ID devuelto (será 1)
+
+### Paso 2: Crear un usuario
+
+**Método**: POST  
+**URL**: http://localhost:8000/usuarios/  
+**Body (JSON)**:
+```json
+{
+  "nombre": "Juan Pérez",
+  "email": "juan@ejemplo.com",
+  "contraseña": "123456",
+  "rol_id": 1
+}
+```
+
+Envía la petición y guarda el ID devuelto (será 1)
+
+### Paso 3: Crear una empresa
+
+**Método**: POST  
+**URL**: http://localhost:8000/empresas/  
+**Body (JSON)**:
+```json
+{
+  "nombre": "TechCorp",
+  "rubro": "Tecnología",
+  "direccion": "Av. Principal 123",
+  "descripcion": "Empresa líder en soluciones tecnológicas",
+  "usuario_id": 1
+}
+```
+
+### Paso 4: Crear una categoría
+
+**Método**: POST  
+**URL**: http://localhost:8000/categorias/  
+**Body (JSON)**:
+```json
+{
+  "nombre": "Desarrollo Web"
+}
+```
+
+### Paso 5: Crear una oferta laboral
+
+**Método**: POST  
+**URL**: http://localhost:8000/ofertas-laborales/  
+**Body (JSON)**:
+```json
+{
+  "titulo": "Desarrollador Full Stack",
+  "descripcion": "Buscamos desarrollador con experiencia en React y Django",
+  "ubicacion": "Arequipa",
+  "categoria_id": 1,
+  "empresa_id": 1
+}
+```
+
+### Paso 6: Crear un postulante
+
+**Método**: POST  
+**URL**: http://localhost:8000/postulantes/  
+**Body (JSON)**:
+```json
+{
+  "nombre_completo": "Ana Rodríguez",
+  "telefono": "987654321",
+  "usuario_id": 1
+}
+```
+
+### Paso 7: Crear una postulación
+
+**Método**: POST  
+**URL**: http://localhost:8000/postulaciones/  
+**Body (JSON)**:
+```json
+{
+  "postulante_id": 1,
+  "oferta_id": 1
+}
+```
+
+### Paso 8: Crear una habilidad
+
+**Método**: POST  
+**URL**: http://localhost:8000/habilidades/  
+**Body (JSON)**:
+```json
+{
+  "nombre": "Python"
+}
+```
+
+### Paso 9: Crear una entrevista
+
+**Método**: POST  
+**URL**: http://localhost:8000/entrevistas/  
+**Body (JSON)**:
+```json
+{
+  "postulacion_id": 1,
+  "fecha": "2025-06-10T14:00:00",
+  "modalidad": "Virtual"
+}
+```
+
+## 3. Consultas (GET)
+
+### Listar todas las ofertas laborales
+
+**Método**: GET  
+**URL**: http://localhost:8000/ofertas-laborales/
+
+### Obtener ofertas de una empresa específica
+
+**Método**: GET  
+**URL**: http://localhost:8000/empresas/1/ofertas-laborales/
+
+### Listar postulaciones por estado
+
+**Método**: GET  
+**URL**: http://localhost:8000/postulaciones/?estado=pendiente
+
+## 4. Actualizaciones (PUT)
+
+### Actualizar estado de una postulación
+
+**Método**: PUT  
+**URL**: http://localhost:8000/postulaciones/1/actualizar-estado  
+**Body (JSON)**:
+```json
+{
+  "estado": "entrevista"
+}
+```
+
+### Actualizar una oferta laboral
+
+**Método**: PUT  
+**URL**: http://localhost:8000/ofertas-laborales/1  
+**Body (JSON)**:
+```json
+{
+  "titulo": "Desarrollador Full Stack Senior",
+  "descripcion": "Buscamos desarrollador con experiencia en React, Django y AWS",
+  "ubicacion": "Arequipa",
+  "categoria_id": 1,
+  "empresa_id": 1,
+  "estado": "activa"
+}
+```
+
+## 5. Eliminación (DELETE)
+
+### Eliminar una habilidad
+
+**Método**: DELETE  
+**URL**: http://localhost:8000/habilidades/1
+
+## 6. Endpoints relacionales
+
+### Obtener currículums de un postulante
+
+**Método**: GET  
+**URL**: http://localhost:8000/postulantes/1/curriculum/
+
+### Obtener notificaciones de un usuario
+
+**Método**: GET  
+**URL**: http://localhost:8000/usuarios/1/notificaciones/
+
+### Obtener entrevistas de una postulación
+
+**Método**: GET  
+**URL**: http://localhost:8000/postulaciones/1/entrevistas/
+
+## 7. Endpoints de utilidad
+
+### Marcar todas las notificaciones como leídas
+
+**Método**: PUT  
+**URL**: http://localhost:8000/usuarios/1/notificaciones/leer-todas
+
+### Verificar si un token está en la lista negra
+
+**Método**: GET  
+**URL**: http://localhost:8000/token-blacklist/check/tu-token-aqui

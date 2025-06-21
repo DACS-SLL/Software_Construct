@@ -157,3 +157,55 @@ parcial_construccion/
 - **Pydantic**: Validación de datos y serialización
 - **Uvicorn**: Servidor ASGI para ejecutar la aplicación
 - **SQLite**: Base de datos para desarrollo
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------
+# 🛠️ Migración de Base de Datos: SQLite a PostgreSQL
+
+---
+
+## 📦 Requisitos previos
+
+- Python 3.10 o superior
+- PostgreSQL instalado y corriendo localmente (puerto 5433 o el configurado en tu maquina)
+- Base de datos `costrucción_db` creada en PostgreSQL
+- Proyecto con modelos definidos en SQLAlchemy
+- Entorno virtual activo
+
+---
+
+## ⚙️ Instalación de dependencias
+
+```bash
+pip install sqlalchemy psycopg2-binary
+```
+
+
+🗃️ Paso 1: Crear base de datos PostgreSQL
+Desde consola PostgreSQL o pgAdmin:
+
+CREATE DATABASE software_db;
+
+🔑 Paso 2: Configurar las URLs de conexión
+En el archivo app/database.py, configura las siguientes variables:
+
+DATABASE_URL = "postgresql://postgres:admin@localhost:5433/costrucción_db"
+
+---con tus credenciales---
+⚠️ Reemplaza usuario y contraseña con tus credenciales reales.
+
+
+Paso 3: Ejecutar migración
+Archivo principal: migrar_datos.py
+
+Este script:
+
+Crea las tablas en PostgreSQL si no existen.
+
+Lee los datos desde SQLite.
+
+Inserta los registros en PostgreSQL.
+
+python migrar_datos.py
